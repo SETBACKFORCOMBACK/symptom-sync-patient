@@ -1,0 +1,218 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { MedicalCard } from "@/components/ui/medical-card";
+import { ArrowLeft, Heart, User, Calendar, AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const SymptomForm = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    symptoms: "",
+    commonSymptoms: [] as string[],
+    urgency: "",
+  });
+
+  const commonSymptomsList = [
+    "Fever", "Headache", "Cough", "Sore throat", "Fatigue", 
+    "Nausea", "Body aches", "Dizziness", "Chest pain", "Shortness of breath"
+  ];
+
+  const handleCommonSymptomChange = (symptom: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      commonSymptoms: checked 
+        ? [...prev.commonSymptoms, symptom]
+        : prev.commonSymptoms.filter(s => s !== symptom)
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name || !formData.age || !formData.gender || (!formData.symptoms && formData.commonSymptoms.length === 0)) {
+      toast({
+        title: "Please fill in all required fields",
+        description: "We need your basic information and symptoms to help you better.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // TODO: Save to Supabase when connected
+    console.log("Form submitted:", formData);
+    
+    toast({
+      title: "Symptoms submitted successfully!",
+      description: "A doctor will review your case shortly.",
+      variant: "default"
+    });
+
+    navigate("/dashboard");
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="mb-4 text-primary hover:text-primary-hover"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
+          
+          <div className="text-center mb-8 animate-fade-in">
+            <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-foreground mb-2">Tell Us About Your Symptoms</h1>
+            <p className="text-muted-foreground">
+              Please provide accurate information so our doctors can help you better.
+            </p>
+          </div>
+        </div>
+
+        <MedicalCard className="animate-slide-up">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Personal Information */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <User className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-semibold">Personal Information</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name" className="text-foreground">Full Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter your full name"
+                    className="mt-2"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="age" className="text-foreground">Age *</Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    min="1"
+                    max="120"
+                    value={formData.age}
+                    onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
+                    placeholder="Your age"
+                    className="mt-2"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="gender" className="text-foreground">Gender *</Label>
+                <Select onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select your gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Symptoms Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertCircle className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-semibold">Your Symptoms</h2>
+              </div>
+              
+              <div>
+                <Label className="text-foreground mb-3 block">Common Symptoms (select all that apply)</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {commonSymptomsList.map((symptom) => (
+                    <div key={symptom} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={symptom}
+                        checked={formData.commonSymptoms.includes(symptom)}
+                        onCheckedChange={(checked) => 
+                          handleCommonSymptomChange(symptom, checked as boolean)
+                        }
+                      />
+                      <Label 
+                        htmlFor={symptom}
+                        className="text-sm text-foreground cursor-pointer"
+                      >
+                        {symptom}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="symptoms" className="text-foreground">
+                  Additional Symptoms or Details
+                </Label>
+                <Textarea
+                  id="symptoms"
+                  value={formData.symptoms}
+                  onChange={(e) => setFormData(prev => ({ ...prev, symptoms: e.target.value }))}
+                  placeholder="Please describe any other symptoms, when they started, their severity, etc."
+                  className="mt-2 min-h-[100px]"
+                  rows={4}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="urgency" className="text-foreground">How urgent do you feel this is?</Label>
+                <Select onValueChange={(value) => setFormData(prev => ({ ...prev, urgency: value }))}>
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select urgency level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low - Can wait a few days</SelectItem>
+                    <SelectItem value="medium">Medium - Would like to see someone today</SelectItem>
+                    <SelectItem value="high">High - Need immediate attention</SelectItem>
+                    <SelectItem value="emergency">Emergency - Severe symptoms</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <Button 
+                type="submit" 
+                className="w-full bg-primary hover:bg-primary-hover text-primary-foreground"
+                size="lg"
+              >
+                Submit Symptoms
+              </Button>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                By submitting, you agree to our Terms of Service and Privacy Policy
+              </p>
+            </div>
+          </form>
+        </MedicalCard>
+      </div>
+    </div>
+  );
+};
+
+export default SymptomForm;
