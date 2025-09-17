@@ -8,63 +8,73 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Healthcare color palette */
-    --background: 210 20% 98%;
-    --foreground: 210 15% 15%;
+    /* Next-level modern healthcare design system */
+    --background: 215 25% 97%;
+    --foreground: 215 20% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 15% 15%;
+    --card-foreground: 215 20% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 15% 15%;
+    --popover-foreground: 215 20% 12%;
 
-    /* Medical blue primary */
-    --primary: 210 100% 40%;
+    /* Modern medical blue with depth */
+    --primary: 213 94% 56%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 210 100% 35%;
-    --primary-light: 210 100% 95%;
+    --primary-hover: 213 94% 50%;
+    --primary-light: 213 94% 96%;
+    --primary-dark: 213 94% 42%;
 
-    /* Soft medical green secondary */
-    --secondary: 145 60% 95%;
-    --secondary-foreground: 145 30% 25%;
+    /* Premium gradient secondary */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 14% 16%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 210 10% 50%;
+    --muted: 215 25% 94%;
+    --muted-foreground: 215 15% 45%;
 
-    /* Trust-building accent */
-    --accent: 145 40% 50%;
+    /* Vibrant accent with modern twist */
+    --accent: 142 76% 54%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 145 40% 95%;
+    --accent-light: 142 76% 96%;
+    --accent-dark: 142 76% 42%;
 
-    --destructive: 0 70% 50%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 95%;
-    --ring: 210 100% 40%;
+    --border: 215 25% 88%;
+    --input: 215 25% 94%;
+    --ring: 213 94% 56%;
 
-    /* Healthcare-specific colors */
-    --success: 145 60% 45%;
+    /* Enhanced healthcare colors */
+    --success: 142 76% 48%;
     --success-foreground: 0 0% 100%;
-    --success-light: 145 60% 95%;
+    --success-light: 142 76% 96%;
 
-    --warning: 45 90% 55%;
-    --warning-foreground: 45 90% 15%;
-    --warning-light: 45 90% 95%;
+    --warning: 38 92% 58%;
+    --warning-foreground: 38 92% 12%;
+    --warning-light: 38 92% 96%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 40%) 0%, hsl(210 100% 50%) 100%);
-    --gradient-healthcare: linear-gradient(135deg, hsl(210 100% 95%) 0%, hsl(145 40% 95%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 20% 96%) 100%);
+    /* Next-level gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(213 94% 56%) 0%, hsl(213 94% 68%) 50%, hsl(142 76% 54%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(213 94% 56%) 0%, hsl(213 94% 48%) 25%, hsl(142 76% 54%) 75%, hsl(142 76% 48%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(215 25% 98%) 100%);
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.9) 0%, hsl(215 25% 96% / 0.8) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(215 25% 97%) 0%, hsl(215 25% 94%) 100%);
 
-    /* Shadows */
-    --shadow-soft: 0 2px 8px -2px hsl(210 20% 50% / 0.1);
-    --shadow-medium: 0 4px 16px -4px hsl(210 20% 50% / 0.15);
-    --shadow-strong: 0 8px 32px -8px hsl(210 20% 50% / 0.25);
+    /* Premium shadows with depth */
+    --shadow-xs: 0 1px 2px 0 hsl(215 25% 12% / 0.05);
+    --shadow-sm: 0 1px 3px 0 hsl(215 25% 12% / 0.1), 0 1px 2px -1px hsl(215 25% 12% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(215 25% 12% / 0.1), 0 2px 4px -2px hsl(215 25% 12% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(215 25% 12% / 0.1), 0 4px 6px -4px hsl(215 25% 12% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(215 25% 12% / 0.1), 0 8px 10px -6px hsl(215 25% 12% / 0.1);
+    --shadow-glow: 0 0 40px hsl(213 94% 56% / 0.3);
+    --shadow-glow-accent: 0 0 40px hsl(142 76% 54% / 0.3);
 
-    /* Animation transitions */
+    /* Modern animation system */
+    --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 0.5rem;
 
@@ -86,52 +96,60 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 210 15% 8%;
-    --foreground: 210 20% 95%;
+    --background: 215 28% 6%;
+    --foreground: 215 25% 94%;
 
-    --card: 210 15% 10%;
-    --card-foreground: 210 20% 95%;
+    --card: 215 28% 8%;
+    --card-foreground: 215 25% 94%;
 
-    --popover: 210 15% 10%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 215 28% 8%;
+    --popover-foreground: 215 25% 94%;
 
-    --primary: 210 100% 55%;
-    --primary-foreground: 210 15% 8%;
-    --primary-hover: 210 100% 50%;
-    --primary-light: 210 100% 15%;
+    --primary: 213 94% 62%;
+    --primary-foreground: 215 28% 6%;
+    --primary-hover: 213 94% 56%;
+    --primary-light: 213 94% 12%;
+    --primary-dark: 213 94% 48%;
 
-    --secondary: 210 15% 15%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 215 28% 12%;
+    --secondary-foreground: 215 25% 88%;
 
-    --muted: 210 15% 15%;
-    --muted-foreground: 210 10% 60%;
+    --muted: 215 28% 12%;
+    --muted-foreground: 215 20% 55%;
 
-    --accent: 145 40% 45%;
-    --accent-foreground: 210 15% 8%;
-    --accent-light: 145 40% 15%;
+    --accent: 142 76% 58%;
+    --accent-foreground: 215 28% 6%;
+    --accent-light: 142 76% 12%;
+    --accent-dark: 142 76% 42%;
 
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 210 20% 95%;
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 215 25% 94%;
 
-    --border: 210 15% 20%;
-    --input: 210 15% 15%;
-    --ring: 210 100% 55%;
+    --border: 215 28% 18%;
+    --input: 215 28% 12%;
+    --ring: 213 94% 62%;
 
-    --success: 145 50% 40%;
-    --success-foreground: 210 20% 95%;
-    --success-light: 145 50% 15%;
+    --success: 142 76% 52%;
+    --success-foreground: 215 25% 94%;
+    --success-light: 142 76% 12%;
 
-    --warning: 45 80% 50%;
-    --warning-foreground: 45 80% 10%;
-    --warning-light: 45 80% 15%;
+    --warning: 38 92% 62%;
+    --warning-foreground: 38 92% 12%;
+    --warning-light: 38 92% 12%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 45%) 0%, hsl(210 100% 60%) 100%);
-    --gradient-healthcare: linear-gradient(135deg, hsl(210 15% 12%) 0%, hsl(145 20% 12%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(210 15% 8%) 0%, hsl(210 15% 10%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(213 94% 62%) 0%, hsl(213 94% 72%) 50%, hsl(142 76% 58%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(213 94% 62%) 0%, hsl(213 94% 52%) 25%, hsl(142 76% 58%) 75%, hsl(142 76% 48%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(215 28% 8%) 0%, hsl(215 28% 10%) 100%);
+    --gradient-glass: linear-gradient(145deg, hsl(215 28% 8% / 0.9) 0%, hsl(215 28% 6% / 0.8) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(215 28% 6%) 0%, hsl(215 28% 8%) 100%);
 
-    --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
-    --shadow-medium: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
-    --shadow-strong: 0 8px 32px -8px hsl(0 0% 0% / 0.5);
+    --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.15);
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.2), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.2), 0 2px 4px -2px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.2), 0 4px 6px -4px hsl(0 0% 0% / 0.2);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.2), 0 8px 10px -6px hsl(0 0% 0% / 0.2);
+    --shadow-glow: 0 0 40px hsl(213 94% 62% / 0.4);
+    --shadow-glow-accent: 0 0 40px hsl(142 76% 58% / 0.4);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -152,24 +170,64 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-sans antialiased;
   }
 
-  /* Healthcare-specific utility classes */
-  .healthcare-gradient {
-    background: var(--gradient-healthcare);
+  /* Next-level utility classes */
+  .gradient-primary {
+    background: var(--gradient-primary);
   }
 
-  .healthcare-shadow {
-    box-shadow: var(--shadow-soft);
+  .gradient-hero {
+    background: var(--gradient-hero);
   }
 
-  .healthcare-shadow-medium {
-    box-shadow: var(--shadow-medium);
+  .gradient-card {
+    background: var(--gradient-card);
   }
 
-  .healthcare-transition {
+  .gradient-glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .shadow-glass {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-glow-accent {
+    box-shadow: var(--shadow-glow-accent);
+  }
+
+  .transition-smooth {
     transition: var(--transition-smooth);
   }
 
-  .bounce-transition {
-    transition: var(--transition-bounce);
+  .transition-spring {
+    transition: var(--transition-spring);
+  }
+
+  /* Glass morphism effects */
+  .glass-card {
+    background: var(--gradient-glass);
+    border: 1px solid hsl(var(--border) / 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Modern hover effects */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
   }
 }

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MedicalCard } from "@/components/ui/medical-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Separator } from "@/components/ui/separator";
+import { usePatientData } from "@/hooks/usePatientData";
 import { 
   Heart, 
   MessageCircle, 
@@ -12,34 +13,21 @@ import {
   User, 
   Calendar,
   Stethoscope,
-  ArrowLeft
+  ArrowLeft,
+  Sparkles,
+  Activity
 } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [patientStatus, setPatientStatus] = useState<"waiting" | "available">("waiting");
-  
-  // Mock patient data - will come from Supabase when connected
-  const patientData = {
-    name: "John Doe",
-    age: 32,
-    gender: "Male",
-    submittedAt: "2024-03-15T10:30:00Z",
-    symptoms: {
-      common: ["Fever", "Headache", "Fatigue"],
-      additional: "Symptoms started 2 days ago. Mild fever around 99°F, persistent headache, and feeling very tired.",
-      urgency: "Medium - Would like to see someone today"
-    }
-  };
+  const { currentPatient, loading } = usePatientData();
 
-  // Simulate doctor availability after a delay
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setPatientStatus("available");
-    }, 5000); // 5 seconds for demo
-
-    return () => clearTimeout(timer);
-  }, []);
+    // If no patient data, redirect to symptom form
+    if (!loading && !currentPatient) {
+      navigate('/symptom-form');
+    }
+  }, [currentPatient, loading, navigate]);
 
   const handleJoinChat = () => {
     navigate("/chat");
@@ -49,23 +37,43 @@ const Dashboard = () => {
     return new Date(dateString).toLocaleString();
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen gradient-subtle flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentPatient) {
+    return null; // Will redirect to symptom form
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen gradient-subtle">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="mb-4 text-primary hover:text-primary-hover"
+            className="mb-4 text-primary hover:text-primary-hover transition-smooth hover-lift"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
           
           <div className="text-center mb-8 animate-fade-in">
-            <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-2">Your Health Dashboard</h1>
-            <p className="text-muted-foreground">
+            <div className="relative inline-block mb-4">
+              <Activity className="w-12 h-12 text-primary mx-auto shadow-glow" />
+              <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Your Health Dashboard
+            </h1>
+            <p className="text-muted-foreground text-lg">
               Track your symptoms and connect with healthcare professionals
             </p>
           </div>
@@ -73,17 +81,17 @@ const Dashboard = () => {
 
         <div className="grid gap-6">
           {/* Status Card */}
-          <MedicalCard variant="gradient" className="animate-slide-up">
-            <div className="flex items-center justify-between mb-4">
+          <MedicalCard variant="gradient" className="animate-slide-up glass-card shadow-glass hover-lift">
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <Stethoscope className="w-6 h-6 text-primary" />
-                <h2 className="text-xl font-semibold">Current Status</h2>
+                <Stethoscope className="w-6 h-6 text-primary shadow-glow" />
+                <h2 className="text-2xl font-bold">Current Status</h2>
               </div>
               <StatusBadge 
-                variant={patientStatus === "waiting" ? "waiting" : "available"}
+                variant={currentPatient.status === "waiting" ? "waiting" : "available"}
                 size="lg"
               >
-                {patientStatus === "waiting" ? (
+                {currentPatient.status === "waiting" ? (
                   <>
                     <Clock className="w-4 h-4 mr-2" />
                     Waiting for Doctor
@@ -98,31 +106,31 @@ const Dashboard = () => {
             </div>
             
             <div className="space-y-4">
-              {patientStatus === "waiting" ? (
-                <div className="text-center py-6">
+              {currentPatient.status === "waiting" ? (
+                <div className="text-center py-8">
                   <div className="animate-pulse-subtle">
-                    <Clock className="w-16 h-16 text-primary mx-auto mb-4" />
+                    <Clock className="w-20 h-20 text-primary mx-auto mb-6 shadow-glow" />
                   </div>
-                  <h3 className="text-lg font-medium mb-2">A doctor will join you soon</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-xl font-bold mb-3">A doctor will join you soon</h3>
+                  <p className="text-muted-foreground text-lg">
                     Please stay online. You'll be notified as soon as a healthcare professional is available to review your symptoms.
                   </p>
                 </div>
               ) : (
-                <div className="text-center py-6">
+                <div className="text-center py-8">
                   <div className="animate-bounce-gentle">
-                    <MessageCircle className="w-16 h-16 text-accent mx-auto mb-4" />
+                    <MessageCircle className="w-20 h-20 text-accent mx-auto mb-6 shadow-glow-accent" />
                   </div>
-                  <h3 className="text-lg font-medium mb-2 text-accent">Doctor is Ready!</h3>
-                  <p className="text-muted-foreground mb-4">
+                  <h3 className="text-xl font-bold mb-3 text-accent">Doctor is Ready!</h3>
+                  <p className="text-muted-foreground text-lg mb-6">
                     A healthcare professional has reviewed your symptoms and is ready to chat with you.
                   </p>
                   <Button 
                     onClick={handleJoinChat}
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                    className="gradient-primary hover:shadow-glow transition-spring text-white font-semibold"
                     size="lg"
                   >
-                    <MessageCircle className="w-4 h-4 mr-2" />
+                    <MessageCircle className="w-5 h-5 mr-2" />
                     Join Chat Now
                   </Button>
                 </div>
@@ -131,71 +139,78 @@ const Dashboard = () => {
           </MedicalCard>
 
           {/* Patient Information */}
-          <MedicalCard className="animate-slide-up">
-            <div className="flex items-center gap-3 mb-4">
-              <User className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-semibold">Patient Information</h2>
+          <MedicalCard className="animate-slide-up glass-card shadow-glass hover-lift">
+            <div className="flex items-center gap-3 mb-6">
+              <User className="w-6 h-6 text-primary shadow-glow" />
+              <h2 className="text-2xl font-bold">Patient Information</h2>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Name</p>
-                <p className="font-medium">{patientData.name}</p>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground font-medium">Name</p>
+                <p className="font-bold text-lg">{currentPatient.name}</p>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Age</p>
-                <p className="font-medium">{patientData.age} years old</p>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground font-medium">Age</p>
+                <p className="font-bold text-lg">{currentPatient.age} years old</p>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Gender</p>
-                <p className="font-medium">{patientData.gender}</p>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground font-medium">Gender</p>
+                <p className="font-bold text-lg capitalize">{currentPatient.gender}</p>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Submitted</p>
-                <p className="font-medium flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {formatDateTime(patientData.submittedAt)}
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground font-medium">Submitted</p>
+                <p className="font-bold text-lg flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  {formatDateTime(currentPatient.created_at)}
                 </p>
               </div>
             </div>
           </MedicalCard>
 
           {/* Symptoms Summary */}
-          <MedicalCard className="animate-slide-up">
-            <div className="flex items-center gap-3 mb-4">
-              <Heart className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-semibold">Symptoms Summary</h2>
+          <MedicalCard className="animate-slide-up glass-card shadow-glass hover-lift">
+            <div className="flex items-center gap-3 mb-6">
+              <Heart className="w-6 h-6 text-primary shadow-glow" />
+              <h2 className="text-2xl font-bold">Symptoms Summary</h2>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-2">Common Symptoms</p>
-                <div className="flex flex-wrap gap-2">
-                  {patientData.symptoms.common.map((symptom) => (
-                    <StatusBadge key={symptom} variant="default">
-                      {symptom}
-                    </StatusBadge>
-                  ))}
+            <div className="space-y-6">
+              {currentPatient.common_symptoms.length > 0 && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-3 font-medium">Common Symptoms</p>
+                  <div className="flex flex-wrap gap-3">
+                    {currentPatient.common_symptoms.map((symptom) => (
+                      <StatusBadge key={symptom} variant="default" className="font-medium">
+                        {symptom}
+                      </StatusBadge>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               
-              <Separator />
+              {currentPatient.common_symptoms.length > 0 && currentPatient.additional_symptoms && (
+                <Separator className="bg-border/50" />
+              )}
+              
+              {currentPatient.additional_symptoms && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-3 font-medium">Additional Details</p>
+                  <p className="text-foreground leading-relaxed text-lg bg-muted/30 p-4 rounded-lg">
+                    {currentPatient.additional_symptoms}
+                  </p>
+                </div>
+              )}
+              
+              <Separator className="bg-border/50" />
               
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Additional Details</p>
-                <p className="text-foreground leading-relaxed">
-                  {patientData.symptoms.additional}
-                </p>
-              </div>
-              
-              <Separator />
-              
-              <div>
-                <p className="text-sm text-muted-foreground mb-2">Urgency Level</p>
+                <p className="text-sm text-muted-foreground mb-3 font-medium">Urgency Level</p>
                 <StatusBadge 
-                  variant={patientData.symptoms.urgency.includes("High") ? "waiting" : "default"}
+                  variant={currentPatient.urgency_level.includes("high") || currentPatient.urgency_level.includes("emergency") ? "waiting" : "default"}
+                  className="font-semibold"
                 >
-                  {patientData.symptoms.urgency}
+                  {currentPatient.urgency_level.charAt(0).toUpperCase() + currentPatient.urgency_level.slice(1)}
                 </StatusBadge>
               </div>
             </div>

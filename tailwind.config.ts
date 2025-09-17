@@ -24,6 +24,7 @@ export default {
           foreground: "hsl(var(--primary-foreground))",
           hover: "hsl(var(--primary-hover))",
           light: "hsl(var(--primary-light))",
+          dark: "hsl(var(--primary-dark))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -41,6 +42,7 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
           light: "hsl(var(--accent-light))",
+          dark: "hsl(var(--accent-dark))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -131,6 +133,14 @@ export default {
           "50%": {
             opacity: "0.8"
           }
+        },
+        "glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px hsl(var(--primary) / 0.5)"
+          },
+          "50%": {
+            boxShadow: "0 0 30px hsl(var(--primary) / 0.8)"
+          }
         }
       },
       animation: {
@@ -140,6 +150,7 @@ export default {
         "slide-up": "slide-up 0.3s ease-out",
         "bounce-gentle": "bounce-gentle 0.6s ease-out",
         "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
+        "glow": "glow 2s ease-in-out infinite",
       },
     },
   },

@@ -7,12 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MedicalCard } from "@/components/ui/medical-card";
-import { ArrowLeft, Heart, User, Calendar, AlertCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Heart, User, AlertCircle, Sparkles } from "lucide-react";
+import { usePatientData } from "@/hooks/usePatientData";
 
 const SymptomForm = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { submitPatientData, loading } = usePatientData();
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -36,53 +36,47 @@ const SymptomForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name || !formData.age || !formData.gender || (!formData.symptoms && formData.commonSymptoms.length === 0)) {
-      toast({
-        title: "Please fill in all required fields",
-        description: "We need your basic information and symptoms to help you better.",
-        variant: "destructive"
-      });
       return;
     }
 
-    // TODO: Save to Supabase when connected
-    console.log("Form submitted:", formData);
-    
-    toast({
-      title: "Symptoms submitted successfully!",
-      description: "A doctor will review your case shortly.",
-      variant: "default"
-    });
-
-    navigate("/dashboard");
+    const patientId = await submitPatientData(formData);
+    if (patientId) {
+      navigate("/dashboard");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen gradient-subtle">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="mb-4 text-primary hover:text-primary-hover"
+            className="mb-4 text-primary hover:text-primary-hover transition-smooth hover-lift"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
           
           <div className="text-center mb-8 animate-fade-in">
-            <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-2">Tell Us About Your Symptoms</h1>
-            <p className="text-muted-foreground">
+            <div className="relative inline-block mb-4">
+              <Heart className="w-12 h-12 text-primary mx-auto shadow-glow" />
+              <Sparkles className="w-4 h-4 text-accent absolute -top-1 -right-1 animate-pulse" />
+            </div>
+            <h1 className="text-4xl font-bold text-foreground mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Tell Us About Your Symptoms
+            </h1>
+            <p className="text-muted-foreground text-lg">
               Please provide accurate information so our doctors can help you better.
             </p>
           </div>
         </div>
 
-        <MedicalCard className="animate-slide-up">
+        <MedicalCard className="animate-slide-up glass-card shadow-glass hover-lift">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Personal Information */}
             <div className="space-y-4">
@@ -196,15 +190,26 @@ const SymptomForm = () => {
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-6">
               <Button 
                 type="submit" 
-                className="w-full bg-primary hover:bg-primary-hover text-primary-foreground"
+                disabled={loading}
+                className="w-full gradient-primary hover:shadow-glow transition-spring text-white font-semibold"
                 size="lg"
               >
-                Submit Symptoms
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Submit Symptoms
+                  </>
+                )}
               </Button>
-              <p className="text-xs text-muted-foreground text-center mt-2">
+              <p className="text-xs text-muted-foreground text-center mt-3">
                 By submitting, you agree to our Terms of Service and Privacy Policy
               </p>
             </div>
