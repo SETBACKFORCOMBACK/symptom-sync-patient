@@ -30,7 +30,7 @@ export const usePatientData = () => {
   const { toast } = useToast();
 
   // Save patient data to Supabase
-  const submitPatientData = async (formData: PatientFormData): Promise<string | null> => {
+  const submitPatientData = async (formData: PatientFormData, userId: string): Promise<string | null> => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -42,7 +42,8 @@ export const usePatientData = () => {
           common_symptoms: formData.commonSymptoms,
           additional_symptoms: formData.symptoms || null,
           urgency_level: formData.urgency,
-          status: 'doctor_available' // Simulate doctor availability immediately
+          user_id: userId,
+          status: 'waiting' // Start as waiting for doctor
         })
         .select()
         .single();

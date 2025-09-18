@@ -9,9 +9,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { MedicalCard } from "@/components/ui/medical-card";
 import { ArrowLeft, Heart, User, AlertCircle, Sparkles } from "lucide-react";
 import { usePatientData } from "@/hooks/usePatientData";
+import { useAuth } from "@/hooks/useAuth";
 
 const SymptomForm = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { submitPatientData, loading } = usePatientData();
   const [formData, setFormData] = useState({
     name: "",
@@ -43,7 +45,7 @@ const SymptomForm = () => {
       return;
     }
 
-    const patientId = await submitPatientData(formData);
+    const patientId = await submitPatientData(formData, user?.id!);
     if (patientId) {
       navigate("/dashboard");
     }
