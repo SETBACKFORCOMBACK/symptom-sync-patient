@@ -1,49 +1,19 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MedicalCard } from "@/components/ui/medical-card";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { 
-  ArrowLeft, 
-  Send, 
-  Stethoscope, 
-  User, 
-  MessageCircle,
-  Shield,
-  Clock
-} from "lucide-react";
-
-interface Message {
-  id: string;
-  sender: "patient" | "doctor";
-  content: string;
-  timestamp: Date;
-  type?: "text" | "system";
-}
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Send, Stethoscope, User, MessageCircle, Shield, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { StatusBadge } from '@/components/ui/status-badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { usePatientData } from '@/hooks/usePatientData';
+import { useChatMessages } from '@/hooks/useChatMessages';
 
 const Chat = () => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      sender: "doctor",
-      content: "Hello! I'm Dr. Smith, and I've reviewed your symptoms. How are you feeling right now?",
-      timestamp: new Date(Date.now() - 2000),
-      type: "text"
-    },
-    {
-      id: "system-1",
-      sender: "doctor",
-      content: "This conversation is encrypted and HIPAA compliant for your privacy.",
-      timestamp: new Date(Date.now() - 1000),
-      type: "system"
-    }
-  ]);
-  const [newMessage, setNewMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const { currentPatient, loading: patientLoading } = usePatientData();
+  const { messages, loading: messagesLoading, isTyping, sendMessage } = useChatMessages(currentPatient?.id || null);
+  const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,46 +23,46 @@ const Chat = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
+  // Redirect if no patient data
+  useEffect(() => {
+    if (!patientLoading && !currentPatient) {
+      navigate('/');
+    }
+  }, [currentPatient, patientLoading, navigate]);
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newMessage.trim()) return;
-
-    const patientMessage: Message = {
-      id: Date.now().toString(),
-      sender: "patient",
-      content: newMessage,
-      timestamp: new Date(),
-      type: "text"
-    };
-
-    setMessages(prev => [...prev, patientMessage]);
-    setNewMessage("");
-    setIsTyping(true);
-
-    // Simulate doctor response
-    setTimeout(() => {
-      const doctorResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        sender: "doctor",
-        content: "Thank you for that information. Based on what you're describing, I'd like to ask a few more questions...",
-        timestamp: new Date(),
-        type: "text"
-      };
-      setMessages(prev => [...prev, doctorResponse]);
-      setIsTyping(false);
-    }, 2000);
+    
+    sendMessage(newMessage);
+    setNewMessage('');
   };
 
-  const formatTime = (timestamp: Date) => {
-    return timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
+
+  if (patientLoading || messagesLoading) {
+    return (
+      <div className="min-h-screen healthcare-gradient flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading chat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentPatient) {
+    return null; // Will redirect
+  }
 
   return (
     <div className="flex flex-col h-screen bg-background">
@@ -112,7 +82,7 @@ const Chat = () => {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center gap-2">
               <Stethoscope className="w-5 h-5 text-primary" />
-              <span className="font-medium">Dr. Smith</span>
+              <span className="font-medium">Dr. Sarah Johnson</span>
               <StatusBadge variant="success" size="sm">
                 Online
               </StatusBadge>
@@ -131,22 +101,27 @@ const Chat = () => {
         <div className="container mx-auto max-w-4xl h-full">
           <ScrollArea className="h-full p-4">
             <div className="space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === "patient" ? "justify-end" : "justify-start"}`}
-                >
-                  <div className={`max-w-[70%] ${message.sender === "patient" ? "order-2" : "order-1"}`}>
-                    <div
-                      className={`rounded-lg px-4 py-3 ${
-                        message.type === "system"
-                          ? "bg-muted text-muted-foreground text-center text-sm italic"
-                          : message.sender === "patient"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-card border border-border"
-                      }`}
-                    >
-                      {message.type !== "system" && (
+              {messages.length === 0 ? (
+                <div className="text-center py-12">
+                  <MessageCircle className="w-16 h-16 text-primary mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Welcome to your consultation!</h3>
+                  <p className="text-muted-foreground">Dr. Sarah Johnson is ready to help you.</p>
+                  <p className="text-sm text-muted-foreground mt-2">Start the conversation by sending a message below.</p>
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender === "patient" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div className={`max-w-[70%] ${message.sender === "patient" ? "order-2" : "order-1"}`}>
+                      <div
+                        className={`rounded-lg px-4 py-3 ${
+                          message.sender === "patient"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-card border border-border"
+                        }`}
+                      >
                         <div className="flex items-center gap-2 mb-1">
                           {message.sender === "doctor" ? (
                             <Stethoscope className="w-4 h-4 text-primary" />
@@ -154,24 +129,22 @@ const Chat = () => {
                             <User className="w-4 h-4" />
                           )}
                           <span className="text-xs font-medium">
-                            {message.sender === "doctor" ? "Dr. Smith" : "You"}
+                            {message.sender === "doctor" ? "Dr. Sarah Johnson" : "You"}
                           </span>
                         </div>
-                      )}
-                      <p className="text-sm leading-relaxed">{message.content}</p>
-                      <p className={`text-xs mt-1 ${
-                        message.type === "system" 
-                          ? "text-muted-foreground" 
-                          : message.sender === "patient" 
-                          ? "text-primary-foreground/70" 
-                          : "text-muted-foreground"
-                      }`}>
-                        {formatTime(message.timestamp)}
-                      </p>
+                        <p className="text-sm leading-relaxed">{message.text}</p>
+                        <p className={`text-xs mt-1 ${
+                          message.sender === "patient" 
+                            ? "text-primary-foreground/70" 
+                            : "text-muted-foreground"
+                        }`}>
+                          {formatTime(message.timestamp)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
               
               {isTyping && (
                 <div className="flex justify-start">
@@ -179,7 +152,7 @@ const Chat = () => {
                     <div className="bg-card border border-border rounded-lg px-4 py-3">
                       <div className="flex items-center gap-2 mb-1">
                         <Stethoscope className="w-4 h-4 text-primary" />
-                        <span className="text-xs font-medium">Dr. Smith</span>
+                        <span className="text-xs font-medium">Dr. Sarah Johnson</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <div className="flex gap-1">
@@ -207,7 +180,7 @@ const Chat = () => {
               ref={inputRef}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message to the doctor..."
+              placeholder="Type your message to Dr. Johnson..."
               className="flex-1"
             />
             <Button 

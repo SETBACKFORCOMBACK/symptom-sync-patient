@@ -42,7 +42,7 @@ export const usePatientData = () => {
           common_symptoms: formData.commonSymptoms,
           additional_symptoms: formData.symptoms || null,
           urgency_level: formData.urgency,
-          status: 'waiting'
+          status: 'doctor_available' // Simulate doctor availability immediately
         })
         .select()
         .single();

@@ -106,35 +106,52 @@ const Dashboard = () => {
             </div>
             
             <div className="space-y-4">
-              {currentPatient.status === "waiting" ? (
-                <div className="text-center py-8">
-                  <div className="animate-pulse-subtle">
-                    <Clock className="w-20 h-20 text-primary mx-auto mb-6 shadow-glow" />
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Current Status</h3>
+                {currentPatient.status === 'waiting' ? (
+                  <StatusBadge variant="waiting" size="default">
+                    <Clock className="w-4 h-4 mr-2" />
+                    Waiting for Doctor
+                  </StatusBadge>
+                ) : (
+                  <StatusBadge variant="available" size="default">
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Doctor Available
+                  </StatusBadge>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                {currentPatient.status === 'waiting' ? (
+                  <div className="text-center py-8">
+                    <div className="animate-pulse-subtle">
+                      <Clock className="w-20 h-20 text-primary mx-auto mb-6 shadow-glow" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">A doctor will join you soon</h3>
+                    <p className="text-muted-foreground text-lg">
+                      Please stay online. You'll be notified as soon as a healthcare professional is available to review your symptoms.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold mb-3">A doctor will join you soon</h3>
-                  <p className="text-muted-foreground text-lg">
-                    Please stay online. You'll be notified as soon as a healthcare professional is available to review your symptoms.
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="animate-bounce-gentle">
-                    <MessageCircle className="w-20 h-20 text-accent mx-auto mb-6 shadow-glow-accent" />
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="animate-bounce-gentle">
+                      <MessageCircle className="w-20 h-20 text-accent mx-auto mb-6 shadow-glow-accent" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 text-accent">Doctor is Ready!</h3>
+                    <p className="text-muted-foreground text-lg mb-6">
+                      Dr. Sarah Johnson has reviewed your symptoms and is ready to chat with you.
+                    </p>
+                    <Button 
+                      onClick={handleJoinChat}
+                      className="gradient-primary hover:shadow-glow transition-spring text-white font-semibold"
+                      size="lg"
+                    >
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Join Chat with Dr. Johnson
+                    </Button>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-accent">Doctor is Ready!</h3>
-                  <p className="text-muted-foreground text-lg mb-6">
-                    A healthcare professional has reviewed your symptoms and is ready to chat with you.
-                  </p>
-                  <Button 
-                    onClick={handleJoinChat}
-                    className="gradient-primary hover:shadow-glow transition-spring text-white font-semibold"
-                    size="lg"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    Join Chat Now
-                  </Button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </MedicalCard>
 

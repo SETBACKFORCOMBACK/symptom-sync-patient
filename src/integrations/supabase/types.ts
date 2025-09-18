@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      messages: {
+        Row: {
+          id: string
+          patient_id: string
+          sender: string
+          text: string
+          timestamp: string
+        }
+        Insert: {
+          id?: string
+          patient_id: string
+          sender: string
+          text: string
+          timestamp?: string
+        }
+        Update: {
+          id?: string
+          patient_id?: string
+          sender?: string
+          text?: string
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patients: {
         Row: {
           additional_symptoms: string | null
