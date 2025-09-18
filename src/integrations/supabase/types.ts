@@ -58,6 +58,7 @@ export type Database = {
           status: string
           updated_at: string
           urgency_level: string
+          user_id: string | null
         }
         Insert: {
           additional_symptoms?: string | null
@@ -70,6 +71,7 @@ export type Database = {
           status?: string
           updated_at?: string
           urgency_level: string
+          user_id?: string | null
         }
         Update: {
           additional_symptoms?: string | null
@@ -82,6 +84,31 @@ export type Database = {
           status?: string
           updated_at?: string
           urgency_level?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
